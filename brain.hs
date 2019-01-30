@@ -54,3 +54,7 @@ countLoopBackward program =
 simpleBfParse :: BfProgram -> Bool
 simpleBfParse symbols =
     countLoopForward symbols == countLoopBackward symbols
+
+simpleBfValidator :: String -> Bool
+simpleBfValidator program =
+    simpleBfParse . simpleBfLexer $ program
