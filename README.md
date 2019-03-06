@@ -1,2 +1,2 @@
 # brainfuckskell
-brainfuck interpreter writte in haskell
+brainfuck interpreter written in haskell
