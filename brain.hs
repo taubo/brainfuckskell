@@ -55,6 +55,22 @@ simpleBfParse :: BfProgram -> Bool
 simpleBfParse symbols =
     countLoopForward symbols == countLoopBackward symbols
 
+type Tape a = ([a], a, [a])
+type BfTape = Tape Int
+
+emptyBfTape :: BfTape
+emptyBfTape = ([], 0, [])
+
+upCell :: BfTape -> BfTape
+upCell (prev, cell, post) = (prev, cell + 1, post)
+
+downCell :: BfTape -> BfTape
+downCell (prev, cell, post) = (prev, cell - 1, post)
+
+leftCell :: BfTape -> BfTape
+leftCell (prev, cell, []) = (prev ++ [cell], 0, [])
+leftCell (prev, cell, x:post) = (prev ++ [cell], x, post)
+
 simpleBfValidator :: String -> Bool
 simpleBfValidator program =
     simpleBfParse . simpleBfLexer $ program
