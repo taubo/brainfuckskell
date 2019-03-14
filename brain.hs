@@ -1,3 +1,5 @@
+import qualified Data.Char as DChar
+
 data BfTerminal
     = Down
     | Up
@@ -70,6 +72,9 @@ downCell (prev, cell, post) = (prev, cell - 1, post)
 leftCell :: BfTape -> BfTape
 leftCell (prev, cell, []) = (prev ++ [cell], 0, [])
 leftCell (prev, cell, x:post) = (prev ++ [cell], x, post)
+
+outCell :: BfTape -> Char
+outCell (_, cell, _) = DChar.chr cell
 
 simpleBfValidator :: String -> Bool
 simpleBfValidator program =
