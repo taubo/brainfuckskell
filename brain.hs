@@ -73,9 +73,12 @@ bfRunBasic (Up: prog) tape = do bfRunBasic prog (upCell tape)
 bfRunBasic (Down: prog) tape = do bfRunBasic prog (downCell tape)
 bfRunBasic (MoveLeft: prog) tape = do bfRunBasic prog (leftCell tape)
 bfRunBasic (MoveRight: prog) tape = do bfRunBasic prog (rightCell tape)
-bfRunBasic (In: prog) tape = do bfRunBasic prog (upCell tape)
-bfRunBasic (Out: prog) tape = do bfRunBasic prog (upCell tape)
-bfRunBasic ([]) tape = do print tape
+bfRunBasic (In: prog) tape@(_, in, _) = do
+    bfRunBasic prog tape
+bfRunBasic (Out: prog) tape = do
+    putStr [(outCell tape)]
+    bfRunBasic prog tape
+bfRunBasic ([]) tape = do return ()
 
 emptyBfTape :: BfTape
 emptyBfTape = ([], 0, [])
