@@ -45,6 +45,9 @@ countSymbol :: BfProgram -> BfTerminal -> Int
 countSymbol program symbol =
     length (filter (\x -> x == symbol) program)
 
+nop :: BfProgram -> BfProgram
+nop [_ : prog] = prog
+
 countLoopForward :: BfProgram -> Int
 countLoopForward program =
     countSymbol program LoopForward
@@ -69,16 +72,35 @@ bfProgramToExecution program =
 -- bfRun tape =
 
 bfRunBasic :: BfProgram -> BfTape -> IO ()
-bfRunBasic (Up: prog) tape = do bfRunBasic prog (upCell tape)
-bfRunBasic (Down: prog) tape = do bfRunBasic prog (downCell tape)
-bfRunBasic (MoveLeft: prog) tape = do bfRunBasic prog (leftCell tape)
-bfRunBasic (MoveRight: prog) tape = do bfRunBasic prog (rightCell tape)
-bfRunBasic (In: prog) tape@(_, in, _) = do
-    bfRunBasic prog tape
+bfRunBasic (Up: prog) tape = do
+    bfRunBasic prog (upCell tape)
+
+bfRunBasic (Down: prog) tape = do
+    bfRunBasic prog (downCell tape)
+
+bfRunBasic (MoveLeft: prog) tape = do
+    bfRunBasic prog (leftCell tape)
+
+bfRunBasic (MoveRight: prog) tape = do
+    bfRunBasic prog (rightCell tape)
+
+bfRunBasic (In: prog) tape = do
+    input <- getChar
+    bfRunBasic prog (inCell input tape)
+
 bfRunBasic (Out: prog) tape = do
     putStr [(outCell tape)]
     bfRunBasic prog tape
-bfRunBasic ([]) tape = do return ()
+
+-- if the cell is equal to 0, jump at the instruction after the matching ]
+bfRunBasic loop@(LoopForward: prog) tape = do
+    return ()
+
+bfRunBasic loop@(LoopBackward: prog) tape = do
+    return ()
+
+bfRunBasic ([]) tape = do
+    return ()
 
 emptyBfTape :: BfTape
 emptyBfTape = ([], 0, [])
