@@ -39,14 +39,14 @@ bfAltTerminalMap input
   | otherwise = Comment
 
 simpleBfLexer :: String -> BfProgram
-simpleBfLexer input = map bfAltTerminalMap input
+simpleBfLexer = map bfAltTerminalMap
 
 countSymbol :: BfProgram -> BfTerminal -> Int
 countSymbol program symbol =
-    length (filter (\x -> x == symbol) program)
+    length (filter (== symbol) program)
 
-nop :: BfProgram -> BfProgram
-nop [_ : prog] = prog
+-- nop :: BfProgram -> BfProgram
+-- nop [_ : prog] = prog
 
 countLoopForward :: BfProgram -> Int
 countLoopForward program =
@@ -72,16 +72,16 @@ bfProgramToExecution program =
 -- bfRun tape =
 
 bfRunBasic :: BfProgram -> BfTape -> IO ()
-bfRunBasic (Up: prog) tape = do
+bfRunBasic (Up: prog) tape =
     bfRunBasic prog (upCell tape)
 
-bfRunBasic (Down: prog) tape = do
+bfRunBasic (Down: prog) tape =
     bfRunBasic prog (downCell tape)
 
-bfRunBasic (MoveLeft: prog) tape = do
+bfRunBasic (MoveLeft: prog) tape =
     bfRunBasic prog (leftCell tape)
 
-bfRunBasic (MoveRight: prog) tape = do
+bfRunBasic (MoveRight: prog) tape =
     bfRunBasic prog (rightCell tape)
 
 bfRunBasic (In: prog) tape = do
@@ -89,17 +89,17 @@ bfRunBasic (In: prog) tape = do
     bfRunBasic prog (inCell input tape)
 
 bfRunBasic (Out: prog) tape = do
-    putStr [(outCell tape)]
+    putStr [outCell tape]
     bfRunBasic prog tape
 
 -- if the cell is equal to 0, jump at the instruction after the matching ]
-bfRunBasic loop@(LoopForward: prog) tape = do
+bfRunBasic loop@(LoopForward: prog) tape =
     return ()
 
-bfRunBasic loop@(LoopBackward: prog) tape = do
+bfRunBasic loop@(LoopBackward: prog) tape =
     return ()
 
-bfRunBasic ([]) tape = do
+bfRunBasic [] tape =
     return ()
 
 emptyBfTape :: BfTape
@@ -126,5 +126,5 @@ inCell :: Char -> BfTape -> BfTape
 inCell inputChar (prev, _, post) = (prev, DChar.ord inputChar, post)
 
 simpleBfValidator :: String -> Bool
-simpleBfValidator program =
-    simpleBfParse . simpleBfLexer $ program
+simpleBfValidator =
+    simpleBfParse . simpleBfLexer
